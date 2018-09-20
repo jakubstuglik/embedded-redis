@@ -55,11 +55,14 @@ abstract class AbstractRedisInstance implements Redis {
         BufferedReader reader = new BufferedReader(new InputStreamReader(redisProcess.getInputStream()));
         try {
             String outputLine;
+            StringBuilder sb = new StringBuilder();
             do {
-                outputLine = reader.readLine();
+                outputLine = reader.readLine();                
                 if (outputLine == null) {
                     //Something goes wrong. Stream is ended before server was activated.
-                    throw new RuntimeException("Can't start redis server. Check logs for details.");
+                    throw new RuntimeException("Can't start redis server. Check logs for details.\n" + sb.toString());
+                } else {
+                	sb.append(outputLine);
                 }
             } while (!outputLine.matches(redisReadyPattern()));
         } finally {
